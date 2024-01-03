@@ -2,14 +2,22 @@
 
 BASHRC="/root/.bashrc"
 
-# Добавление функции showtask, если она отсутствует 
-if ! grep -q 'showtask()' "$BASHRC"; then
+# Проверка и добавление функции showtask
+if ! grep -q "showtask()" "$BASHRC"; then
     echo "Добавляем функцию showtask..."
     cat << 'EOF' >> "$BASHRC"
 
 showtask() {
     tailf "/opt/webdir/temp/\$1/status"
 }
+
+EOF
+fi
+
+# Проверка и добавление функции _showtask
+if ! grep -q "_showtask()" "$BASHRC"; then
+    echo "Добавляем вспомогательную функцию _showtask..."
+    cat << 'EOF' >> "$BASHRC"
 
 _showtask() {
     local cur=\${COMP_WORDS[COMP_CWORD]}
@@ -20,13 +28,13 @@ complete -F _showtask showtask
 EOF
 fi
 
-# Добавление алиаса menu, если он отсутствует
+# Проверка и добавление алиаса menu
 if ! grep -q "alias menu=" "$BASHRC"; then
     echo "Добавляем алиас menu..."
     echo -e "\nalias menu='/root/menu.sh'" >> "$BASHRC"
 fi
 
-# Источник .bashrc
+# Перезагрузка .bashrc
 if [ "$(whoami)" = "root" ]; then
     source "$BASHRC"
 else
