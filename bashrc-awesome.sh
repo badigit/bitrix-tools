@@ -1,30 +1,29 @@
 #!/bin/bash
 
 BASHRC="/root/.bashrc"
-TEMP_FILE=$(mktemp)
 
-# Функции и алиасы для добавления
-echo "Добавляем алиасы..."
+# Добавление функции showtask, если она отсутствует
+if ! grep -q 'showtask()' "$BASHRC"; then
+    echo "Добавляем функцию showtask..."
+    cat << 'EOF' >> "$BASHRC"
 
-read -r -d '' CONTENT_TO_ADD << 'EOF'
 showtask() {
-        tailf "/opt/webdir/temp/\$1/status"
+    tailf "/opt/webdir/temp/\$1/status"
 }
 
 _showtask() {
-        local cur=\${COMP_WORDS[COMP_CWORD]}
-        COMPREPLY=( \$(compgen -W "\$(ls /opt/webdir/temp/)"-- \$cur) )
+    local cur=\${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=( \$(compgen -W "\$(ls /opt/webdir/temp/)"-- \$cur) )
 }
 complete -F _showtask showtask
-
-alias menu='/root/menu.sh'
 EOF
+fi
 
-# Проверка и добавление в .bashrc, если отсутствует
-grep -qF -- "$CONTENT_TO_ADD" "$BASHRC" || echo "$CONTENT_TO_ADD" >> "$BASHRC"
-
-# Удаление временного файла
-rm "$TEMP_FILE"
+# Добавление алиаса menu, если он отсутствует
+if ! grep -q "alias menu=" "$BASHRC"; then
+    echo "Добавляем алиас menu..."
+    echo "alias menu='/root/menu.sh'" >> "$BASHRC"
+fi
 
 # Источник .bashrc
 if [ "$(whoami)" = "root" ]; then
