@@ -13,16 +13,17 @@ showtask() {
 
 _showtask() {
     local cur=\${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( \$(compgen -W "\$(ls /opt/webdir/temp/)"-- \$cur) )
+    COMPREPLY=( \$(compgen -W "\$(ls /opt/webdir/temp/)" -- \$cur) )
 }
 complete -F _showtask showtask
+
 EOF
 fi
 
 # Добавление алиаса menu, если он отсутствует
 if ! grep -q "alias menu=" "$BASHRC"; then
     echo "Добавляем алиас menu..."
-    echo "alias menu='/root/menu.sh'" >> "$BASHRC"
+    echo -e "\nalias menu='/root/menu.sh'" >> "$BASHRC"
 fi
 
 # Источник .bashrc
