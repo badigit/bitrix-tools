@@ -14,9 +14,9 @@ showtask() {
 EOF
 fi
 
-# Проверка и добавление функции _showtask
+# Проверка и добавление функции _showtask и complete
 if ! grep -q "_showtask()" "$BASHRC"; then
-    echo "Добавляем вспомогательную функцию _showtask..."
+    echo "Добавляем вспомогательную функцию _showtask и complete..."
     cat << 'EOF' >> "$BASHRC"
 
 _showtask() {
@@ -31,7 +31,8 @@ fi
 # Проверка и добавление алиаса menu
 if ! grep -q "alias menu=" "$BASHRC"; then
     echo "Добавляем алиас menu..."
-    echo -e "\nalias menu='/root/menu.sh'" >> "$BASHRC"
+    echo "" >> "$BASHRC"
+    echo "alias menu='/root/menu.sh'" >> "$BASHRC"
 fi
 
 # Перезагрузка .bashrc
