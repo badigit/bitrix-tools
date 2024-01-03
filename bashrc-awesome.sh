@@ -2,7 +2,7 @@
 
 BASHRC="/root/.bashrc"
 
-# Добавление функции showtask, если она отсутствует
+# Добавление функции showtask, если она отсутствует 
 if ! grep -q 'showtask()' "$BASHRC"; then
     echo "Добавляем функцию showtask..."
     cat << 'EOF' >> "$BASHRC"
