@@ -2,40 +2,41 @@
 
 BASHRC="/root/.bashrc"
 
-# Проверка и добавление функции showtask
-if ! grep -q "showtask()" "$BASHRC"; then
-    echo "Добавляем функцию showtask..."
-    cat << 'EOF' >> "$BASHRC"
-
-showtask() {
-    tailf "/opt/webdir/temp/\$1/status"
+# Функция для добавления блока кода, если он отсутствует
+add_if_missing() {
+    local search="$1"
+    local block="$2"
+    if ! grep -qF "$search" "$BASHRC"; then
+        echo "Добавляем в .bashrc: $search"
+        echo "$block" >> "$BASHRC"
+    fi
 }
 
-EOF
-fi
+# Блоки кода для добавления
+showtask_block='
+showtask() {
+    tailf "/opt/webdir/temp/$1/status"
+}
+'
 
-# Проверка и добавление функции _showtask и complete
-if ! grep -q "_showtask()" "$BASHRC"; then
-    echo "Добавляем вспомогательную функцию _showtask и complete..."
-    cat << 'EOF' >> "$BASHRC"
-
+_showtask_block='
 _showtask() {
-    local cur=\${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( \$(compgen -W "\$(ls /opt/webdir/temp/)" -- \$cur) )
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=( $(compgen -W "$(ls /opt/webdir/temp/)" -- $cur) )
 }
 complete -F _showtask showtask
+'
 
-EOF
-fi
+menu_alias='
+alias menu='\''/root/menu.sh'\''
+'
 
-# Проверка и добавление алиаса menu
-if ! grep -q "alias menu=" "$BASHRC"; then
-    echo "Добавляем алиас menu..."
-    echo "" >> "$BASHRC"
-    echo "alias menu='/root/menu.sh'" >> "$BASHRC"
-fi
+# Добавление блоков
+add_if_missing "showtask()" "$showtask_block"
+add_if_missing "_showtask()" "$_showtask_block"
+add_if_missing "alias menu=" "$menu_alias"
 
-# Перезагрузка .bashrc
+# Источник .bashrc
 if [ "$(whoami)" = "root" ]; then
     source "$BASHRC"
 else
